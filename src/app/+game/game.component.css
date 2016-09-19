@@ -1,0 +1,54 @@
+:host {
+  display: block;
+  padding: 20px;
+}
+
+.states {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.chart {
+  display: block;
+  width: 100%;
+}
+
+
+
+.flex {
+  display: flex;
+}
+
+.flex > div {
+  flex: 1;
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale3d(.3, .3, .3);
+    font-size: 25%;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.big {
+  font-size: 300%;
+  font-weight: bold;
+  animation-duration: 1.5s;
+  animation-fill-mode: both;
+  animation-name: zoomIn;
+}
+
+.prices span {
+  padding: 5px;
+}
+
+.company-detail tbody td,
+.company-detail thead th {
+  text-align: right;
+}
+

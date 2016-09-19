@@ -1,0 +1,172 @@
+<div *ngIf="simService.game">
+    <div *ngIf="editMode" class="alert alert-warning" role="alert">
+        <strong>EditMode!</strong>
+        <p><button type="button" class="btn btn-success" (click)="simService.save();editMode = false">Save</button></p>
+    </div>
+    <div class="row">
+        <div class="card col-md-3 col-md-push-9">
+            <div class="card-block">
+                <h3 class="card-title">Config
+                    <button *ngIf="!editMode" type="button" class="btn btn-warning" (click)="editMode = true">Edit</button>
+                    <button *ngIf="!editMode && simService.game.currentState == 'gameStartState'" type="button" class="btn btn-danger" (click)="simService.simulateGame()">Demo</button>
+                </h3>
+                <div>
+                    <b>initialStock:</b> <app-click-edit [enabled]="editMode" [(value)]="simService.game.initialStock"></app-click-edit>
+                </div>
+                <div>
+                    <b>initialCash:</b> <app-click-edit [enabled]="editMode" [(value)]="simService.game.initialCash"></app-click-edit>
+                </div>
+                <div>
+                    <b>customerDayToPay:</b> <app-click-edit [enabled]="editMode" [(value)]="simService.game.customerDayToPay"></app-click-edit>
+                </div>
+                <div>
+                    <b>supplierDayToPay:</b> <app-click-edit [enabled]="editMode" [(value)]="simService.game.supplierDayToPay"></app-click-edit>
+                </div>
+                <div>
+                    <b>supplierMaxOrderSize:</b> <app-click-edit [enabled]="editMode" [(value)]="simService.game.supplierMaxOrderSize"></app-click-edit>
+                </div>
+                <div>
+                    <b>marketPriceRange:</b>
+                        <app-click-edit [enabled]="editMode" [(value)]="simService.game.marketPriceRange[0]"></app-click-edit> to
+                        <app-click-edit [enabled]="editMode" [(value)]="simService.game.marketPriceRange[1]"></app-click-edit>
+                </div>
+                <div>
+                    <b>supplierPriceRange:</b>
+                        <app-click-edit [enabled]="editMode" [(value)]="simService.game.supplierPriceRange[0]"></app-click-edit> to
+                        <app-click-edit [enabled]="editMode" [(value)]="simService.game.supplierPriceRange[1]"></app-click-edit>
+                </div>
+                <div>
+                    <b>numberOfDays:</b> <app-click-edit [enabled]="editMode" [(value)]="simService.game.numberOfDays"></app-click-edit>
+                </div>
+                <div>
+                    <b>productionRawToFinished:</b> <app-click-edit [enabled]="editMode" [(value)]="simService.game.productionRawToFinished"></app-click-edit>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9 col-md-pull-3">
+            <h2>{{simService.game.description}} ({{simService.game.startDate | date: 'short'}})</h2>
+
+            <h1>DAY {{simService.game.currentDay + 1}}</h1>
+
+            <div class="states btn-group">
+                <button type="button" class="btn btn-secondary" [ngClass]="{'bg-primary': simService.game.currentState == 'gameStartState'}">gameStartState</button>
+            </div>
+            <div class="card"  *ngIf="simService.game.currentState == 'gameStartState'">
+                <form class="card-block form-inline" (submit)="addCompany()">
+                    <label>
+                        Add company
+                        <input  class="form-control" [(ngModel)]="newName" name="newName" placeholder="name">
+                    </label>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </form>
+            </div>
+            <div class="states btn-group">
+                <button type="button" class="btn btn-secondary" [ngClass]="{'bg-primary': simService.game.currentState == 'nextDayState'}">nextDayState</button>
+                <button type="button" class="btn btn-secondary" [ngClass]="{'bg-primary': simService.game.currentState == 'decidingMarketPriceState'}">decidingMarketPriceState</button>
+                <button type="button" class="btn btn-secondary" [ngClass]="{'bg-primary': simService.game.currentState == 'acceptingSalesState'}">acceptingSalesState</button>
+                <button type="button" class="btn btn-secondary" [ngClass]="{'bg-primary': simService.game.currentState == 'salesDelvieryState'}">salesDelvieryState</button>
+            </div>
+            <div class="row">
+                <div class="card col-md-6"  *ngIf="simService.game.currentState == 'acceptingSalesState'">
+                    <form class="card-block">
+                        <div class="form-group row" [ngClass]="{'has-success': c.order, 'has-danger': c.order === false}" *ngFor="let c of simService.game.companies">
+                            <label class="col-sm-2" [attr.for]="'sales_' + c.name">{{c.name}}</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control form-control-success form-control-danger" id="sales_{{c.name}}"
+                                [(ngModel)]="c.dailySalesQty[simService.game.currentDay]" name="sales_{{c.name}}"
+                                placeholder="qty" (blur)="sendOrder(c, 'dailySalesQty')">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="states btn-group">
+                <button type="button" class="btn btn-secondary" [ngClass]="{'bg-primary': simService.game.currentState == 'customerPayingInvoicesState'}">customerPayingInvoicesState</button>
+                <button type="button" class="btn btn-secondary" [ngClass]="{'bg-primary': simService.game.currentState == 'decidingSupplierPriceState'}">decidingSupplierPriceState</button>
+                <button type="button" class="btn btn-secondary" [ngClass]="{'bg-primary': simService.game.currentState == 'acceptingPurchasesState'}">acceptingPurchasesState</button>
+                <button type="button" class="btn btn-secondary" [ngClass]="{'bg-primary': simService.game.currentState == 'deliveringPurchasesState'}">deliveringPurchasesState</button>
+            </div>
+            <div class="row">
+                <div class="card col-md-6"  *ngIf="simService.game.currentState == 'acceptingPurchasesState'">
+                    <form class="card-block">
+                        <div class="form-group row" [ngClass]="{'has-success': c.order, 'has-danger': c.order === false}" *ngFor="let c of simService.game.companies">
+                            <label class="col-sm-2" [attr.for]="'sales_' + c.name">{{c.name}}</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control form-control-success form-control-danger" id="sales_{{c.name}}"
+                                [(ngModel)]="c.dailyPurchaseQty[simService.game.currentDay]" name="sales_{{c.name}}"
+                                placeholder="qty" (blur)="sendOrder(c, 'dailyPurchaseQty')">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="states btn-group">
+                <button type="button" class="btn btn-secondary" [ngClass]="{'bg-primary': simService.game.currentState == 'gameEndState'}">gameEndState</button>
+            </div>
+
+            <button class="btn btn-primary" (click)="simService.next()"  [disabled]="simService.game.currentState == 'gameEndState'">Next</button>
+        </div>
+    </div>
+
+    <div class="flex">
+        <div>
+            <h2>Market</h2>
+            <div class="prices">
+                <span *ngFor="let m of simService.game.dailyMarketPrices; let last = last" [ngClass]="{big: last}">{{m}}</span>
+            </div>
+        </div>
+        <div>
+            <h2>Suppliers</h2>
+            <div class="prices">
+                <span *ngFor="let m of simService.game.dailySupplierPrices; let last = last" [ngClass]="{big: last}">{{m}}</span>
+            </div>
+        </div>
+    </div>
+
+    <h2>Companies</h2>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item" *ngFor="let c of simService.game.companies">
+            <a class="nav-link"
+            (click)="selectedCompanyName = selectedCompanyName == c.name ? undefined : c.name"
+            [ngClass]="{'active': selectedCompanyName == c.name, 'bg-danger': !c.check}">{{c.name}}</a></li>
+    </ul>
+    <div *ngIf="selectedCompanyName">
+        <table class="company-detail table table-sm table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th *ngFor="let day of simService.gameChartLabels">{{day}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let o of tableVars">
+                    <th>{{o.v}}</th>
+                    <td *ngFor="let day of simService.gameChartLabels" [ngClass]="{'table-danger': o.check && simService.getCompany(selectedCompanyName)[o.check] && !simService.getCompany(selectedCompanyName)[o.check][day - 1]}">
+                        <div *ngIf="simService.getCompany(selectedCompanyName)[o.v]">
+                            <span *ngIf="!o.edit">{{simService.getCompany(selectedCompanyName)[o.v][day - 1]}}</span>
+                            <app-click-edit *ngIf="o.edit" [enabled]="editMode" [(value)]="simService.getCompany(selectedCompanyName)[o.v][day - 1]"></app-click-edit>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Results</h2>
+<!--
+    <table-sortable
+        [columns]="columns"
+        [data]="simService.game.companies"
+        [sort]="sorting">
+    Loading table...
+    </table-sortable>
+-->
+    <base-chart *ngIf="simService.gameChartData.length > 0" class="chart"
+                [datasets]="simService.gameChartData"
+                [labels]="simService.gameChartLabels"
+                [options]="lineChartOptions"
+                [chartType]="'line'"></base-chart>
+
+
+</div>

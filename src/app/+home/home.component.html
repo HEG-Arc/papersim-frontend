@@ -1,0 +1,13 @@
+<div class="card">
+  <form class="card-block form-inline" (submit)="createGame()">
+    <div class="form-group">
+      <label for="name" class="sr-only">Name</label>
+      <input [(ngModel)]="newName" type="text" class="form-control" id="name" name="newName" placeholder="Name">
+    </div>
+    <button type="submit" class="btn btn-primary">Create Game</button>
+  </form>
+</div>
+
+<div class="list-group">
+  <a *ngFor="let game of simService.games" class="list-group-item" [routerLink]="['/game', game.id]">{{game.description}} {{game.startDate | date:'short'}}</a>
+</div>

@@ -1,0 +1,4 @@
+<span class="form-inline" (click)="edit()" >
+    <span *ngIf="!actif">{{value}}</span>
+    <input class="form-control" *ngIf="actif" [ngModel]="value" (blur)="actif=false" (ngModelChange)="updateData($event)"/>
+</span>
