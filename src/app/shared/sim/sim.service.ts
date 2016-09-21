@@ -188,7 +188,7 @@ export class SimService {
         }).forEach((company: any, index: number) => {
             // rank
             company.rank = index + 1;
-            company.margin = company.totalProfit / company.totalSales * 100;
+            company.margin = Math.round(company.totalProfit / company.totalSales * 10000) / 100;
             // checks
             if (company.stockCheck && company.maxSupplierQtyCheck && company.cashCheck) {
                 company.check = company.stockCheck.every((c: any) => { return c; }) &&
