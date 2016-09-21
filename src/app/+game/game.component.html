@@ -154,14 +154,11 @@
     </div>
 
     <h2>Results</h2>
-<!--
-    <table-sortable
-        [columns]="columns"
-        [data]="simService.game.companies"
-        [sort]="sorting">
+    <datatable
+        [options]="dataTableOptions"
+        [rows]="simService.game.companies">
     Loading table...
-    </table-sortable>
--->
+    </datatable>
     <base-chart *ngIf="simService.gameChartData.length > 0" class="chart"
                 [datasets]="simService.gameChartData"
                 [labels]="simService.gameChartLabels"

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { ChartsModule } from 'ng2-charts/ng2-charts';
-// import { FuelUiModule } from 'fuel-ui';
+import { Angular2DataTableModule } from 'angular2-data-table';
 
 import { routing, appRoutingProviders } from './app.routes';
 import { AppComponent } from './app.component';
@@ -26,7 +26,7 @@ import { FocusedInputDirective, ToolbarComponent, ClickEditComponent, SimService
     FormsModule,
     HttpModule,
     ChartsModule,
-  //  FuelUiModule,
+    Angular2DataTableModule,
     routing
   ],
   providers: [appRoutingProviders, SimService],
