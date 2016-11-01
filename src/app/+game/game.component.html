@@ -159,11 +159,9 @@
         [rows]="simService.game.companies">
     Loading table...
     </datatable>
-    <base-chart *ngIf="simService.gameChartData.length > 0" class="chart"
+    <canvas baseChart *ngIf="simService.gameChartData.length > 0" class="chart"
                 [datasets]="simService.gameChartData"
                 [labels]="simService.gameChartLabels"
                 [options]="lineChartOptions"
-                [chartType]="'line'"></base-chart>
-
-
+                [chartType]="'line'"></canvas>
 </div>
