@@ -111,9 +111,9 @@ export class SimService {
         }
     }
 
-    addCompany(name: string) {
+    addCompany(name: string, odoo: any) {
         if (this.game) {
-            this.socket.emit('addCompany', this.game.id, name);
+            this.socket.emit('addCompany', this.game.id, name, odoo);
         }
     }
 
@@ -146,7 +146,12 @@ export class SimService {
                         currentStock: c.currentStock,
                         currentCash: c.currentCash,
                         dailySalesQty: c.dailySalesQty,
-                        dailyPurchaseQty: c.dailyPurchaseQty
+                        dailyPurchaseQty: c.dailyPurchaseQty,
+                        odoo: {
+                            database: c.odoo.database,
+                            username: c.odoo.username,
+                            password: c.odoo.password
+                        }
                     };
                 }),
                 nextState: this.game.nextState,

@@ -83,6 +83,8 @@ export class GameComponent implements OnInit, OnDestroy {
   };
 
   newName: string;
+  odoo: any = {};
+  selectedCompanyName: string;
   private sub: any;
 
   constructor(private route: ActivatedRoute, private simService: SimService) { }
@@ -100,9 +102,16 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   addCompany(): boolean {
-    this.simService.addCompany(this.newName);
+    this.simService.addCompany(this.newName, this.odoo);
     this.newName = '';
     return false;
+  }
+
+  toggleCompany(c: any) {
+    this.selectedCompanyName = this.selectedCompanyName === c.name ? undefined : c.name;
+    if (!c.odoo) {
+      c.odoo = {};
+    }
   }
 
   sendOrder(company: any, field: string) {

@@ -56,6 +56,9 @@
                     <label>
                         Add company
                         <input  class="form-control" [(ngModel)]="newName" name="newName" placeholder="name">
+                        <input  class="form-control" [(ngModel)]="odoo.database" name="odoo_database" placeholder="odoo database">
+                        <input  class="form-control" [(ngModel)]="odoo.username" name="odoo_username" placeholder="username">
+                        <input  class="form-control" [(ngModel)]="odoo.password" type="password" name="odoo_password" placeholder="password">
                     </label>
                     <button type="submit" class="btn btn-primary">Add</button>
                 </form>
@@ -128,10 +131,28 @@
     <ul class="nav nav-tabs">
         <li class="nav-item" *ngFor="let c of simService.game.companies">
             <a class="nav-link"
-            (click)="selectedCompanyName = selectedCompanyName == c.name ? undefined : c.name"
+            (click)="toggleCompany(c)"
             [ngClass]="{'active': selectedCompanyName == c.name, 'bg-danger': !c.check}">{{c.name}}</a></li>
     </ul>
     <div *ngIf="selectedCompanyName">
+        <div *ngIf="editMode">
+            <div>
+                <label>Name</label>
+                <input  class="form-control" [(ngModel)]="simService.getCompany(selectedCompanyName).name" name="newName" placeholder="name">
+            </div>
+            <div>
+                <label>database</label>
+                <input  class="form-control" [(ngModel)]="simService.getCompany(selectedCompanyName).odoo.database" name="odoo_database" placeholder="odoo database">
+            </div>
+            <div>
+                <label>username</label>
+                <input  class="form-control" [(ngModel)]="simService.getCompany(selectedCompanyName).odoo.username" name="odoo_username" placeholder="username">
+            </div>
+            <div>
+                <label>password</label>
+                <input  class="form-control" [(ngModel)]="simService.getCompany(selectedCompanyName).odoo.password" type="password" name="odoo_password" placeholder="password">
+            </div>
+        </div>
         <table class="company-detail table table-sm table-bordered table-hover table-striped">
             <thead>
                 <tr>
